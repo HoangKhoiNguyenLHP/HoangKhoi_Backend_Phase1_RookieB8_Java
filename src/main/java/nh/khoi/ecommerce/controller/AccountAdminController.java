@@ -33,7 +33,6 @@ public class AccountAdminController
     }
 
     // [GET] /accounts/:id
-    // Test comment
     @GetMapping("{id}")
     public ResponseEntity<Map<String, Object>> getAccountAdminById(@PathVariable("id") UUID accountAdminId) {
         AccountAdminDto accountAdminDto = accountAdminService.getAccountAdminById(accountAdminId);
