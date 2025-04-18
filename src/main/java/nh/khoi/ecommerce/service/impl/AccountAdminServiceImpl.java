@@ -10,6 +10,7 @@ import nh.khoi.ecommerce.service.AccountAdminService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class AccountAdminServiceImpl implements AccountAdminService
 {
     private AccountAdminRepository accountAdminRepository;
 
-    // [GET] /accounts/list
+    // [GET] /accounts
     @Override
     public List<AccountAdminDto> getAllAccountsAdmin()
     {
@@ -41,7 +42,7 @@ public class AccountAdminServiceImpl implements AccountAdminService
         return AccountAdminMappper.mapToAccountAdminDto(accountAdmin);
     }
 
-    // [Post] /accounts/create
+    // [Post] /accounts
     @Override
     public AccountAdminDto createAccountAdmin(AccountAdminDto accountAdminDto)
     {
@@ -49,5 +50,44 @@ public class AccountAdminServiceImpl implements AccountAdminService
         AccountAdmin savedAccountAdmin = accountAdminRepository.save(accountAdmin);
 
         return AccountAdminMappper.mapToAccountAdminDto(savedAccountAdmin);
+    }
+
+    // [PATCH] /accounts/:id
+    @Override
+    public AccountAdminDto editAccountAdmin(Map<String, Object> updateFields, UUID accountAdminId)
+    {
+        AccountAdmin accountAdmin = accountAdminRepository.findById(accountAdminId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Account does not exist with given id: " + accountAdminId
+                ));
+
+        updateFields.forEach((key, value) -> {
+            switch(key) {
+                case "firstName":
+                    accountAdmin.setFirstName((String)value);
+                    break;
+                case "lastName":
+                    accountAdmin.setLastName((String) value);
+                    break;
+                case "email":
+                    accountAdmin.setEmail((String) value);
+                    break;
+            }
+        });
+
+        AccountAdmin updatedAccount = accountAdminRepository.save(accountAdmin);
+        return AccountAdminMappper.mapToAccountAdminDto(updatedAccount);
+    }
+
+    // [DELETE] /accounts/:id
+    @Override
+    public void deleteAccountAdmin(UUID accountAdminId)
+    {
+        AccountAdmin accountAdmin = accountAdminRepository.findById(accountAdminId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Account does not exist with given id: " + accountAdminId
+                ));
+
+        accountAdminRepository.deleteById(accountAdminId);
     }
 }
