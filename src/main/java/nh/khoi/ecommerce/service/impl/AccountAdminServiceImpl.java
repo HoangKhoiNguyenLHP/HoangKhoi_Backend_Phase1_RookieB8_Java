@@ -1,93 +1,49 @@
 package nh.khoi.ecommerce.service.impl;
 
-import lombok.AllArgsConstructor;
-import nh.khoi.ecommerce.dto.AccountAdminDto;
+import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.entity.AccountAdmin;
-import nh.khoi.ecommerce.exception.ResourceNotFoundException;
-import nh.khoi.ecommerce.mapper.AccountAdminMappper;
 import nh.khoi.ecommerce.repository.AccountAdminRepository;
 import nh.khoi.ecommerce.service.AccountAdminService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AccountAdminServiceImpl implements AccountAdminService
 {
-    private AccountAdminRepository accountAdminRepository;
+    private final AccountAdminRepository accountAdminRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    // [GET] /accounts
+
+    // public AccountAdminServiceImpl(AccountAdminRepository accountAdminRepository, BCryptPasswordEncoder passwordEncoder) {
+    //     this.accountAdminRepository = accountAdminRepository;
+    //     this.passwordEncoder = passwordEncoder;
+    // }
+
+    // [POST] /admin/account/register
     @Override
-    public List<AccountAdminDto> getAllAccountsAdmin()
+    public void registerAccount(String firstName, String lastName, String email, String password)
     {
-        List<AccountAdmin> listAccountsAdmin = accountAdminRepository.findAll();
-        return listAccountsAdmin.stream()
-                .map((eachAccount) -> AccountAdminMappper.mapToAccountAdminDto(eachAccount))
-                .collect(Collectors.toList());
-    }
+        // ----- Check existed email ----- //
+        Optional<AccountAdmin> existedAccount = accountAdminRepository.findByEmail(email);
+        if(existedAccount.isPresent()) {
+            throw new RuntimeException("Email existed in the system!");
+        }
+        // ----- End check existed email ----- //
 
-    // [GET] /accounts/:id
-    @Override
-    public AccountAdminDto getAccountAdminById(UUID accountAdminId)
-    {
-        AccountAdmin accountAdmin = accountAdminRepository.findById(accountAdminId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Account does not exist with given id: " + accountAdminId
-                ));
+        // ----- Encrypt password using Bcrypt ----- //
+        String hashedPassword = passwordEncoder.encode(password);
+        // ----- End encrypt password using Bcrypt ----- //
 
-        return AccountAdminMappper.mapToAccountAdminDto(accountAdmin);
-    }
+        AccountAdmin newAccount = new AccountAdmin();
+        newAccount.setFirstName(firstName);
+        newAccount.setLastName(lastName);
+        newAccount.setEmail(email);
+        newAccount.setPassword(hashedPassword);
+        newAccount.setStatus("active");
 
-    // [Post] /accounts
-    @Override
-    public AccountAdminDto createAccountAdmin(AccountAdminDto accountAdminDto)
-    {
-        AccountAdmin accountAdmin = AccountAdminMappper.mapToAccountAdmin(accountAdminDto);
-        AccountAdmin savedAccountAdmin = accountAdminRepository.save(accountAdmin);
-
-        return AccountAdminMappper.mapToAccountAdminDto(savedAccountAdmin);
-    }
-
-    // [PATCH] /accounts/:id
-    @Override
-    public AccountAdminDto editAccountAdmin(Map<String, Object> updateFields, UUID accountAdminId)
-    {
-        AccountAdmin accountAdmin = accountAdminRepository.findById(accountAdminId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Account does not exist with given id: " + accountAdminId
-                ));
-
-        updateFields.forEach((key, value) -> {
-            switch(key) {
-                case "firstName":
-                    accountAdmin.setFirstName((String)value);
-                    break;
-                case "lastName":
-                    accountAdmin.setLastName((String) value);
-                    break;
-                case "email":
-                    accountAdmin.setEmail((String) value);
-                    break;
-            }
-        });
-
-        AccountAdmin updatedAccount = accountAdminRepository.save(accountAdmin);
-        return AccountAdminMappper.mapToAccountAdminDto(updatedAccount);
-    }
-
-    // [DELETE] /accounts/:id
-    @Override
-    public void deleteAccountAdmin(UUID accountAdminId)
-    {
-        AccountAdmin accountAdmin = accountAdminRepository.findById(accountAdminId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Account does not exist with given id: " + accountAdminId
-                ));
-
-        accountAdminRepository.deleteById(accountAdminId);
+        accountAdminRepository.save(newAccount);
     }
 }

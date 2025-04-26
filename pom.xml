@@ -63,6 +63,12 @@
 			<version>2.2.0</version>
 		</dependency>
 		<!-- End Swagger/OpenAPI UI for Spring Boot 3.x+ -->
+		<!-- Bean Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<!-- End Bean Spring Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
