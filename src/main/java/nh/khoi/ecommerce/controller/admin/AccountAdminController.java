@@ -2,6 +2,7 @@ package nh.khoi.ecommerce.controller.admin;
 
 
 import lombok.RequiredArgsConstructor;
+import nh.khoi.ecommerce.request.LoginRequest;
 import nh.khoi.ecommerce.request.RegisterRequest;
 import nh.khoi.ecommerce.response.ApiResponse;
 import nh.khoi.ecommerce.service.AccountAdminService;
@@ -47,6 +48,29 @@ public class AccountAdminController
                 null
             );
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        }
+    }
+
+    // [POST] /admin/account/login
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> loginAccount(@RequestBody LoginRequest accountDto) {
+        try {
+            Map<String, Object> resultFromService = accountAdminService.loginAccount(accountDto.getEmail(), accountDto.getPassword());
+
+            ApiResponse<Map<String, Object>> response = new ApiResponse<>(
+                    200,
+                    "Login successfully!",
+                    resultFromService
+            );
+            return ResponseEntity.ok(response);
+        }
+        catch (RuntimeException e) {
+            ApiResponse<Map<String, Object>> errorResponse = new ApiResponse<>(
+                    401,
+                    e.getMessage(),
+                    null
+            );
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
 }
