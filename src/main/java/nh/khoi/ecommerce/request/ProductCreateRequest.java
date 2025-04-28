@@ -1,24 +1,20 @@
-package nh.khoi.ecommerce.dto;
+package nh.khoi.ecommerce.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDto
+public class ProductCreateRequest
 {
-    private UUID id;
     private String name;
     private String description;
     private Double price;
-    private List<String> images;
+    private List<MultipartFile> images;
     private Boolean isFeatured = false;
-    private LocalDateTime createdOn;
-    private LocalDateTime updatedOn;
 }

@@ -2,12 +2,12 @@ package nh.khoi.ecommerce.controller.admin;
 
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.ProductDto;
+import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.response.ApiResponse;
 import nh.khoi.ecommerce.service.ProductService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,16 +31,18 @@ public class ProductAdminController
         return ResponseEntity.ok(response);
     }
 
-    // // [Post] /admin/products
-    // @PostMapping()
-    // public ResponseEntity<ApiResponse<ProductDto>> createProduct(@RequestBody ProductDto productDto) {
-    //     ProductDto savedProduct = productService.createProduct(productDto);
-    //
-    //     ApiResponse<ProductDto> response = new ApiResponse<>(
-    //             201,
-    //             "Create product successfully!",
-    //             savedProduct
-    //     );
-    //     return new ResponseEntity<>(response, HttpStatus.CREATED);
-    // }
+    // [POST] /admin/products
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<ApiResponse<ProductDto>> createProduct(
+            @ModelAttribute ProductCreateRequest createProductRequest
+    )
+    {
+        ProductDto savedProduct = productService.createProduct(createProductRequest);
+        ApiResponse<ProductDto> response = new ApiResponse<>(
+                201,
+                "Create product successfully!",
+                savedProduct
+        );
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 }

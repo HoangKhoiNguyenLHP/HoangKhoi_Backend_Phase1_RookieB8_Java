@@ -31,7 +31,7 @@ public class Product
     private String description;
 
     @Column(name = "price")
-    private double price;
+    private Double price;
 
     @Column(name = "images")
     private List<String> images;

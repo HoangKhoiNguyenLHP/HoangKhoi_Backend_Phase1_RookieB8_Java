@@ -56,6 +56,13 @@
 			<version>1.18.30</version> <!-- Use latest or compatible -->
 			<scope>provided</scope>
 		</dependency>
+		<!-- Cloudinary -->
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.32.2</version>
+		</dependency>
+		<!-- End cloudinary -->
 		<!-- Swagger/OpenAPI UI for Spring Boot 3.x+ -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
