@@ -3,13 +3,18 @@ package nh.khoi.ecommerce.controller.admin;
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.ProductDto;
 import nh.khoi.ecommerce.request.ProductCreateRequest;
+import nh.khoi.ecommerce.request.ProductEditRequest;
 import nh.khoi.ecommerce.response.ApiResponse;
 import nh.khoi.ecommerce.service.ProductService;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -44,5 +49,22 @@ public class ProductAdminController
                 savedProduct
         );
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // [PATCH] /admin/products/:id
+    @PatchMapping(path = "{id}", consumes = "multipart/form-data")
+    public ResponseEntity<ApiResponse<ProductDto>> editProduct(
+            @ModelAttribute ProductEditRequest updateFields,
+            @PathVariable("id") UUID productId
+    )
+    {
+        ProductDto updatedProduct = productService.editProduct(updateFields, productId);
+
+        ApiResponse<ProductDto> response = new ApiResponse<>(
+                200,
+                "Update product successfully!",
+                updatedProduct
+        );
+        return ResponseEntity.ok(response);
     }
 }
