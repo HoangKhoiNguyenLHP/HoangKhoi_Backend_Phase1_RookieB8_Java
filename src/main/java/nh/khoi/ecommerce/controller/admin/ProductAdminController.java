@@ -92,6 +92,19 @@ public class ProductAdminController
         return ResponseEntity.ok(response);
     }
 
+    // [PATCH] /admin/products/:id/recover
+    @PatchMapping("{id}/recover")
+    public ResponseEntity<ApiResponse<Void>> recoverProduct(@PathVariable("id") UUID productId) {
+        productService.recoverProduct(productId);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                200,
+                "Recover product successfully!",
+                null
+        );
+        return ResponseEntity.ok(response);
+    }
+
     // [DELETE] /admin/products/:id/permanent
     @DeleteMapping("{id}/permanent")
     public ResponseEntity<ApiResponse<Void>> deleteProductPermanent(@PathVariable("id") UUID productId) {

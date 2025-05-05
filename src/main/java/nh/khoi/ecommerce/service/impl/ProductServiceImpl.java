@@ -147,6 +147,21 @@ public class ProductServiceImpl implements ProductService
         productRepository.save(product);
     }
 
+    // [PATCH] /admin/products/:id/recover
+    @Override
+    public void recoverProduct(UUID productId)
+    {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product not found with given id: " + productId
+                ));
+
+        System.out.println("Chay vao day");
+        product.setDeleted(false);
+
+        productRepository.save(product);
+    }
+
     // [DELETE] /admin/products/:id/permanent
     @Override
     public void deleteProductPermanent(UUID productId)

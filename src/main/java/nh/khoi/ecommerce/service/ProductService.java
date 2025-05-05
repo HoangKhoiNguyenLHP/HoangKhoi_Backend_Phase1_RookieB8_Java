@@ -23,6 +23,9 @@ public interface ProductService
     // [DELETE] /admin/products/:id
     void deleteProductSoft(UUID productId);
 
+    // [PATCH] /admin/products/:id/recover
+    void recoverProduct(UUID productId);
+
     // [DELETE] /admin/products/:id/permanent
     void deleteProductPermanent(UUID productId);
 }
