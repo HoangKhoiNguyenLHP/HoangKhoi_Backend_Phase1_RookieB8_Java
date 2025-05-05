@@ -6,6 +6,7 @@ import nh.khoi.ecommerce.dto.ProductDto;
 import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.request.ProductEditRequest;
 import nh.khoi.ecommerce.response.ApiResponse;
+import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,15 @@ public class ProductAdminController
 
     // [GET] /admin/products
     @GetMapping()
-    public ResponseEntity<ApiResponse<List<ProductDto>>> getAllProducts(
+    public ResponseEntity<ApiResponse<PaginatedResponse<ProductDto>>> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "3") int limit
     )
     {
-        List<ProductDto> listProducts = productService.getAllProducts(page, limit);
+        // List<ProductDto> listProducts = productService.getAllProducts(page, limit);
+        PaginatedResponse<ProductDto> listProducts = productService.getAllProducts(page, limit);
 
-        ApiResponse<List<ProductDto>> response = new ApiResponse<>(
+        ApiResponse<PaginatedResponse<ProductDto>> response = new ApiResponse<>(
                 200,
                 "Get list products successfully!",
                 listProducts

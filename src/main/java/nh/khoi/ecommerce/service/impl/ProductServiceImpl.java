@@ -9,6 +9,7 @@ import nh.khoi.ecommerce.mapper.ProductMapper;
 import nh.khoi.ecommerce.repository.ProductRepository;
 import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.request.ProductEditRequest;
+import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.CloudinaryService;
 import nh.khoi.ecommerce.service.ProductService;
 import org.springframework.stereotype.Service;
@@ -30,17 +31,26 @@ public class ProductServiceImpl implements ProductService
 
     // [GET] /admin/products
     @Override
-    public List<ProductDto> getAllProducts(int page, int limit)
+    public PaginatedResponse<ProductDto> getAllProducts(int page, int limit)
     {
         Pageable pageable = PageRequest.of(page - 1, limit);
 
         Page<Product> listProducts = productRepository.findAll(pageable);
 
-        return listProducts
+        List<ProductDto> productDtos = listProducts
                 .getContent()
                 .stream()
                 .map((eachProduct) -> ProductMapper.mapToProductDto(eachProduct))
                 .collect(Collectors.toList());
+
+        PaginatedResponse<ProductDto> response = new PaginatedResponse<>(
+                listProducts.getTotalPages(),
+                listProducts.getTotalElements(),
+                (page - 1) * limit,
+                productDtos
+        );
+
+        return response;
     }
 
     // [POST] /admin/products
