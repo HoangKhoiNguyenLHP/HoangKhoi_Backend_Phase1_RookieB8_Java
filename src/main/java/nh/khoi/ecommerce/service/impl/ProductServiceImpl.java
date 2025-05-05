@@ -12,6 +12,9 @@ import nh.khoi.ecommerce.request.ProductEditRequest;
 import nh.khoi.ecommerce.service.CloudinaryService;
 import nh.khoi.ecommerce.service.ProductService;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,11 +30,15 @@ public class ProductServiceImpl implements ProductService
 
     // [GET] /admin/products
     @Override
-    public List<ProductDto> getAllProducts()
+    public List<ProductDto> getAllProducts(int page, int limit)
     {
-        List<Product> listProducts = productRepository.findAll();
+        Pageable pageable = PageRequest.of(page - 1, limit);
 
-        return listProducts.stream()
+        Page<Product> listProducts = productRepository.findAll(pageable);
+
+        return listProducts
+                .getContent()
+                .stream()
                 .map((eachProduct) -> ProductMapper.mapToProductDto(eachProduct))
                 .collect(Collectors.toList());
     }

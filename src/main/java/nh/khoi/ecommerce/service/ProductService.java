@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface ProductService
 {
     // [GET] /admin/products
-    List<ProductDto> getAllProducts();
+    List<ProductDto> getAllProducts(int page, int limit);
 
     // [POST] /admin/products
     ProductDto createProduct(ProductCreateRequest createProductRequest);

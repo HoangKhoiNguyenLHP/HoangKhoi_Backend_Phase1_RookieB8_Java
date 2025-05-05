@@ -24,8 +24,12 @@ public class ProductAdminController
 
     // [GET] /admin/products
     @GetMapping()
-    public ResponseEntity<ApiResponse<List<ProductDto>>> getAllProducts() {
-        List<ProductDto> listProducts = productService.getAllProducts();
+    public ResponseEntity<ApiResponse<List<ProductDto>>> getAllProducts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "3") int limit
+    )
+    {
+        List<ProductDto> listProducts = productService.getAllProducts(page, limit);
 
         ApiResponse<List<ProductDto>> response = new ApiResponse<>(
                 200,
