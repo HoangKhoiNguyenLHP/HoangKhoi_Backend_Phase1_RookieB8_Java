@@ -2,6 +2,7 @@ package nh.khoi.ecommerce.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.ProductDto;
+import nh.khoi.ecommerce.entity.AccountAdmin;
 import nh.khoi.ecommerce.entity.Product;
 import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.exception.ResourceNotFoundException;
@@ -144,5 +145,17 @@ public class ProductServiceImpl implements ProductService
         product.setDeleted(true);
 
         productRepository.save(product);
+    }
+
+    // [DELETE] /admin/products/:id/permanent
+    @Override
+    public void deleteProductPermanent(UUID productId)
+    {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product not found with given id: " + productId
+                ));
+
+        productRepository.deleteById(productId);
     }
 }

@@ -91,4 +91,17 @@ public class ProductAdminController
         );
         return ResponseEntity.ok(response);
     }
+
+    // [DELETE] /admin/products/:id/permanent
+    @DeleteMapping("{id}/permanent")
+    public ResponseEntity<ApiResponse<Void>> deleteProductPermanent(@PathVariable("id") UUID productId) {
+        productService.deleteProductPermanent(productId);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                200,
+                "Delete product permanently successfully!",
+                null
+        );
+        return ResponseEntity.ok(response);
+    }
 }

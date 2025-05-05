@@ -22,4 +22,7 @@ public interface ProductService
 
     // [DELETE] /admin/products/:id
     void deleteProductSoft(UUID productId);
+
+    // [DELETE] /admin/products/:id/permanent
+    void deleteProductPermanent(UUID productId);
 }
