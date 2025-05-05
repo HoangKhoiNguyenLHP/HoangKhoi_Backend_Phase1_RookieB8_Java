@@ -1,5 +1,7 @@
 package nh.khoi.ecommerce.request;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,8 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductCreateRequest
 {
+    @NotBlank(message = "Product name is required!")
     private String name;
     private String description;
+
+    @DecimalMin(value = "0.0", inclusive = true, message = "Price cannot be negative!")
     private Double price;
     private List<MultipartFile> images;
     private Boolean isFeatured = false;

@@ -1,19 +1,18 @@
 package nh.khoi.ecommerce.controller.admin;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.ProductDto;
 import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.request.ProductEditRequest;
 import nh.khoi.ecommerce.response.ApiResponse;
 import nh.khoi.ecommerce.service.ProductService;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -39,9 +38,16 @@ public class ProductAdminController
     // [POST] /admin/products
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<ProductDto>> createProduct(
-            @ModelAttribute ProductCreateRequest createProductRequest
+            @ModelAttribute @Valid ProductCreateRequest createProductRequest,
+            BindingResult bindingResult
     )
     {
+        if(bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldError().getDefaultMessage();
+            ApiResponse<ProductDto> response = new ApiResponse<>(400, errorMessage, null);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
         ProductDto savedProduct = productService.createProduct(createProductRequest);
         ApiResponse<ProductDto> response = new ApiResponse<>(
                 201,
@@ -59,7 +65,6 @@ public class ProductAdminController
     )
     {
         ProductDto updatedProduct = productService.editProduct(updateFields, productId);
-
         ApiResponse<ProductDto> response = new ApiResponse<>(
                 200,
                 "Update product successfully!",

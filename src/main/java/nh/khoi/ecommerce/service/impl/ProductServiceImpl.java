@@ -3,6 +3,7 @@ package nh.khoi.ecommerce.service.impl;
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.ProductDto;
 import nh.khoi.ecommerce.entity.Product;
+import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.exception.ResourceNotFoundException;
 import nh.khoi.ecommerce.mapper.ProductMapper;
 import nh.khoi.ecommerce.repository.ProductRepository;
@@ -11,7 +12,6 @@ import nh.khoi.ecommerce.request.ProductEditRequest;
 import nh.khoi.ecommerce.service.CloudinaryService;
 import nh.khoi.ecommerce.service.ProductService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +66,16 @@ public class ProductServiceImpl implements ProductService
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Product does not exist with given id: " + productId
                 ));
+
+        // ----- Validation manually ----- //
+        if(updateFields.getName() != null && updateFields.getName().trim().isEmpty()) {
+            throw new BadRequestException("Product name is required!");
+        }
+
+        if(updateFields.getPrice() != null && updateFields.getPrice() < 0) {
+            throw new BadRequestException("Price cannot be negative!");
+        }
+        // ----- End validation manually ----- //
 
         if(updateFields.getName() != null) {
             product.setName(updateFields.getName());

@@ -5,7 +5,6 @@ import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.request.ProductEditRequest;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public interface ProductService

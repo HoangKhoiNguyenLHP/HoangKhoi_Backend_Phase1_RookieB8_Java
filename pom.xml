@@ -70,6 +70,16 @@
 			<version>2.2.0</version>
 		</dependency>
 		<!-- End Swagger/OpenAPI UI for Spring Boot 3.x+ -->
+		<!-- Bean validation -->
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<!-- End Bean validation -->
 		<!-- Bean Spring Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
