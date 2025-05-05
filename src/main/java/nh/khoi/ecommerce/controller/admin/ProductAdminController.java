@@ -1,5 +1,6 @@
 package nh.khoi.ecommerce.controller.admin;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.ProductDto;
@@ -24,6 +25,7 @@ public class ProductAdminController
     private final ProductService productService;
 
     // [GET] /admin/products
+    @Operation(summary = "Get all products")
     @GetMapping()
     public ResponseEntity<ApiResponse<PaginatedResponse<ProductDto>>> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
@@ -42,6 +44,7 @@ public class ProductAdminController
     }
 
     // [POST] /admin/products
+    @Operation(summary = "Create a product")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<ProductDto>> createProduct(
             @ModelAttribute @Valid ProductCreateRequest createProductRequest,
@@ -64,6 +67,7 @@ public class ProductAdminController
     }
 
     // [PATCH] /admin/products/:id
+    @Operation(summary = "Update a product")
     @PatchMapping(path = "{id}", consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<ProductDto>> editProduct(
             @ModelAttribute ProductEditRequest updateFields,
@@ -80,6 +84,7 @@ public class ProductAdminController
     }
 
     // [DELETE] /admin/products/:id
+    @Operation(summary = "Delete soft a product")
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse<Void>> deleteProductSoft(@PathVariable("id") UUID productId) {
         productService.deleteProductSoft(productId);
@@ -93,6 +98,7 @@ public class ProductAdminController
     }
 
     // [PATCH] /admin/products/:id/recover
+    @Operation(summary = "Recover a product")
     @PatchMapping("{id}/recover")
     public ResponseEntity<ApiResponse<Void>> recoverProduct(@PathVariable("id") UUID productId) {
         productService.recoverProduct(productId);
@@ -106,6 +112,7 @@ public class ProductAdminController
     }
 
     // [DELETE] /admin/products/:id/permanent
+    @Operation(summary = "Delete permanently a product")
     @DeleteMapping("{id}/permanent")
     public ResponseEntity<ApiResponse<Void>> deleteProductPermanent(@PathVariable("id") UUID productId) {
         productService.deleteProductPermanent(productId);
