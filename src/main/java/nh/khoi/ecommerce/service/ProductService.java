@@ -19,4 +19,7 @@ public interface ProductService
 
     // [PATCH] /admin/products/:id
     ProductDto editProduct(ProductEditRequest updateFields, UUID productId);
+
+    // [DELETE] /admin/products/:id
+    void deleteProductSoft(UUID productId);
 }

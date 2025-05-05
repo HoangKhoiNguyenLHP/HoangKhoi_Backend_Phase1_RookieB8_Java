@@ -39,6 +39,9 @@ public class Product
     @Column(name = "is_featured")
     private Boolean isFeatured = false;
 
+    @Column(name = "deleted")
+    private Boolean deleted = false;
+
     @Column(name = "created_on")
     @CreationTimestamp
     private LocalDateTime createdOn;
@@ -49,6 +52,6 @@ public class Product
 
     @Override
     public String toString() {
-        return "Product{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", price=" + price + ", images=" + images + ", isFeatured=" + isFeatured + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + '}';
+        return "Product{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", price=" + price + ", images=" + images + ", isFeatured=" + isFeatured + ", deleted=" + deleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + '}';
     }
 }

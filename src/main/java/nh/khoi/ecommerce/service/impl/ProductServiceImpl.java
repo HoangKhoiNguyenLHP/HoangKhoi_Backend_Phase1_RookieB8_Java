@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService
     {
         Pageable pageable = PageRequest.of(page - 1, limit);
 
-        Page<Product> listProducts = productRepository.findAll(pageable);
+        Page<Product> listProducts = productRepository.findAllByDeletedFalse(pageable);
 
         List<ProductDto> productDtos = listProducts
                 .getContent()
@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService
     {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Product does not exist with given id: " + productId
+                        "Product not found with given id: " + productId
                 ));
 
         // ----- Validation manually ----- //
@@ -130,5 +130,19 @@ public class ProductServiceImpl implements ProductService
 
         Product updatedProduct = productRepository.save(product);
         return ProductMapper.mapToProductDto(updatedProduct);
+    }
+
+    // [DELETE] /admin/products/:id
+    @Override
+    public void deleteProductSoft(UUID productId)
+    {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product not found with given id: " + productId
+                ));
+
+        product.setDeleted(true);
+
+        productRepository.save(product);
     }
 }
