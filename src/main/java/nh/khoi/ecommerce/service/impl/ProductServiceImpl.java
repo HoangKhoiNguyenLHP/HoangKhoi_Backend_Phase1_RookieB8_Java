@@ -156,7 +156,6 @@ public class ProductServiceImpl implements ProductService
                         "Product not found with given id: " + productId
                 ));
 
-        System.out.println("Chay vao day");
         product.setDeleted(false);
 
         productRepository.save(product);
