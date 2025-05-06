@@ -17,4 +17,7 @@ public interface CategoryService
 
     // [PATCH] /admin/categories/:id
     CategoryDto editCategory(Map<String, Object> updateFields, UUID categoryId);
+
+    // [DELETE] /admin/categories/:id
+    void deleteCategorySoft(UUID categoryId);
 }

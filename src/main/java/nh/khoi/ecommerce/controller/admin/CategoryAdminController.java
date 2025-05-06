@@ -64,7 +64,7 @@ public class CategoryAdminController
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // [PATCH] /admin/products/:id
+    // [PATCH] /admin/categories/:id
     @Operation(summary = "Update a category")
     @PatchMapping("{id}")
     public ResponseEntity<ApiResponse<CategoryDto>> editCategory(
@@ -77,6 +77,20 @@ public class CategoryAdminController
                 200,
                 "Update category successfully!",
                 updatedCategory
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    // [DELETE] /admin/categories/:id
+    @Operation(summary = "Delete soft a category")
+    @DeleteMapping("{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteCategorySoft(@PathVariable("id") UUID categoryId) {
+        categoryService.deleteCategorySoft(categoryId);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                200,
+                "Delete soft category successfully!",
+                null
         );
         return ResponseEntity.ok(response);
     }

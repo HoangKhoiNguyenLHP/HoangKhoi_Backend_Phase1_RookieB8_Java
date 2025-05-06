@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.CategoryDto;
 import nh.khoi.ecommerce.entity.AccountAdmin;
 import nh.khoi.ecommerce.entity.Category;
+import nh.khoi.ecommerce.entity.Product;
 import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.exception.ResourceNotFoundException;
 import nh.khoi.ecommerce.mapper.CategoryMapper;
@@ -149,5 +150,19 @@ public class CategoryServiceImpl implements CategoryService
 
         Category updatedCategory = categoryRepository.save(category);
         return CategoryMapper.mapToCategoryDto(updatedCategory);
+    }
+
+    // [DELETE] /admin/categories/:id
+    @Override
+    public void deleteCategorySoft(UUID categoryId)
+    {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Category not found with given id: " + categoryId
+                ));
+
+        category.setDeleted(true);
+
+        categoryRepository.save(category);
     }
 }
