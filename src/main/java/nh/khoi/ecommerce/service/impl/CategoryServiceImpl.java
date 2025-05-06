@@ -2,9 +2,7 @@ package nh.khoi.ecommerce.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.CategoryDto;
-import nh.khoi.ecommerce.entity.AccountAdmin;
 import nh.khoi.ecommerce.entity.Category;
-import nh.khoi.ecommerce.entity.Product;
 import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.exception.ResourceNotFoundException;
 import nh.khoi.ecommerce.mapper.CategoryMapper;
@@ -162,6 +160,20 @@ public class CategoryServiceImpl implements CategoryService
                 ));
 
         category.setDeleted(true);
+
+        categoryRepository.save(category);
+    }
+
+    // [PATCH] /admin/products/:id/recover
+    @Override
+    public void recoverCategory(UUID categoryId)
+    {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Category not found with given id: " + categoryId
+                ));
+
+        category.setDeleted(false);
 
         categoryRepository.save(category);
     }

@@ -94,4 +94,18 @@ public class CategoryAdminController
         );
         return ResponseEntity.ok(response);
     }
+
+    // [PATCH] /admin/products/:id/recover
+    @Operation(summary = "Recover a category")
+    @PatchMapping("{id}/recover")
+    public ResponseEntity<ApiResponse<Void>> recoverCategory(@PathVariable("id") UUID categoryId) {
+        categoryService.recoverCategory(categoryId);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                200,
+                "Recover category successfully!",
+                null
+        );
+        return ResponseEntity.ok(response);
+    }
 }

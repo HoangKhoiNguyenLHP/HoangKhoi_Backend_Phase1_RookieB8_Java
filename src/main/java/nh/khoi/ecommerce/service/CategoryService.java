@@ -20,4 +20,7 @@ public interface CategoryService
 
     // [DELETE] /admin/categories/:id
     void deleteCategorySoft(UUID categoryId);
+
+    // [PATCH] /admin/products/:id/recover
+    void recoverCategory(UUID categoryId);
 }
