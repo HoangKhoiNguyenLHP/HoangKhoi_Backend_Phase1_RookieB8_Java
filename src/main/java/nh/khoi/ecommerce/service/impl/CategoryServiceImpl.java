@@ -2,7 +2,10 @@ package nh.khoi.ecommerce.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.CategoryDto;
+import nh.khoi.ecommerce.entity.AccountAdmin;
 import nh.khoi.ecommerce.entity.Category;
+import nh.khoi.ecommerce.exception.BadRequestException;
+import nh.khoi.ecommerce.exception.ResourceNotFoundException;
 import nh.khoi.ecommerce.mapper.CategoryMapper;
 import nh.khoi.ecommerce.repository.CategoryRepository;
 import nh.khoi.ecommerce.response.PaginatedResponse;
@@ -14,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,5 +79,75 @@ public class CategoryServiceImpl implements CategoryService
 
         Category savedCategory = categoryRepository.save(category);
         return CategoryMapper.mapToCategoryDto(savedCategory);
+    }
+
+    // [PATCH] /admin/categories/:id
+    @Override
+    public CategoryDto editCategory(Map<String, Object> updateFields, UUID categoryId)
+    {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Category not found with given id: " + categoryId
+                ));
+
+        updateFields.forEach((key, value) -> {
+            switch(key) {
+                case "name":
+                    // ----- Validation manually [PATCH] ----- //
+                    if(value != null && value.toString().trim().isEmpty()) {
+                        throw new BadRequestException("Category name is required!");
+                    }
+                    // ----- End validation manually [PATCH] ----- //
+                    String name = (String) value;
+                    category.setName(name);
+
+                    // update slug
+                    String baseSlug = SlugUtil.toSlug(name);
+                    String uniqueSlug = SlugUtil.generateUniqueSlug(baseSlug, slug -> categoryRepository.existsBySlug(slug));
+                    category.setSlug(uniqueSlug);
+                    break;
+
+                case "parent":
+                    String parentStr = (String) value;
+                    if(parentStr == null || parentStr.isBlank()) {
+                        category.setParent(null);
+                    }
+                    else {
+                        try {
+                            category.setParent(UUID.fromString(parentStr));
+                        }
+                        catch (IllegalArgumentException e) {
+                            throw new IllegalArgumentException("Invalid UUID format for parent ID!");
+                        }
+                    }
+                    break;
+
+                case "description":
+                    category.setDescription((String) value);
+                    break;
+
+                case "position":
+                    if(value == null || value.toString().isBlank()) {
+                        Optional<Category> cateWithMaxPosition = categoryRepository.findTopByOrderByPositionDesc();
+
+                        int newPosition = cateWithMaxPosition
+                                .map(c -> c.getPosition() != null ? c.getPosition() + 1 : 1)
+                                .orElse(1);
+                        category.setPosition(newPosition);
+                    }
+                    else {
+                        try {
+                            category.setPosition(Integer.parseInt(value.toString()));
+                        }
+                        catch (NumberFormatException e) {
+                            throw new IllegalArgumentException("Position must be an integer!");
+                        }
+                    }
+                    break;
+            }
+        });
+
+        Category updatedCategory = categoryRepository.save(category);
+        return CategoryMapper.mapToCategoryDto(updatedCategory);
     }
 }

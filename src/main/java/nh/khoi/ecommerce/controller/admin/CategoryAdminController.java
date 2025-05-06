@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.CategoryDto;
-import nh.khoi.ecommerce.dto.ProductDto;
-import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.response.ApiResponse;
 import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.CategoryService;
@@ -13,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -61,5 +62,22 @@ public class CategoryAdminController
                 savedCategory
         );
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // [PATCH] /admin/products/:id
+    @Operation(summary = "Update a category")
+    @PatchMapping("{id}")
+    public ResponseEntity<ApiResponse<CategoryDto>> editCategory(
+            @RequestBody Map<String, Object> updateFields,
+            @PathVariable("id") UUID productId
+    )
+    {
+        CategoryDto updatedCategory = categoryService.editCategory(updateFields, productId);
+        ApiResponse<CategoryDto> response = new ApiResponse<>(
+                200,
+                "Update category successfully!",
+                updatedCategory
+        );
+        return ResponseEntity.ok(response);
     }
 }
