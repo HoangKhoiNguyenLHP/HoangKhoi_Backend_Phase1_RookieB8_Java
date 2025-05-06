@@ -164,7 +164,7 @@ public class CategoryServiceImpl implements CategoryService
         categoryRepository.save(category);
     }
 
-    // [PATCH] /admin/products/:id/recover
+    // [PATCH] /admin/categories/:id/recover
     @Override
     public void recoverCategory(UUID categoryId)
     {
@@ -176,5 +176,17 @@ public class CategoryServiceImpl implements CategoryService
         category.setDeleted(false);
 
         categoryRepository.save(category);
+    }
+
+    // [DELETE] /admin/categories/:id/permanent
+    @Override
+    public void deleteCategoryPermanent(UUID categoryId)
+    {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Category not found with given id: " + categoryId
+                ));
+
+        categoryRepository.deleteById(categoryId);
     }
 }

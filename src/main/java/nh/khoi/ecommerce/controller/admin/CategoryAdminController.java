@@ -95,7 +95,7 @@ public class CategoryAdminController
         return ResponseEntity.ok(response);
     }
 
-    // [PATCH] /admin/products/:id/recover
+    // [PATCH] /admin/categories/:id/recover
     @Operation(summary = "Recover a category")
     @PatchMapping("{id}/recover")
     public ResponseEntity<ApiResponse<Void>> recoverCategory(@PathVariable("id") UUID categoryId) {
@@ -104,6 +104,20 @@ public class CategoryAdminController
         ApiResponse<Void> response = new ApiResponse<>(
                 200,
                 "Recover category successfully!",
+                null
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    // [DELETE] /admin/categories/:id/permanent
+    @Operation(summary = "Delete permanently a category")
+    @DeleteMapping("{id}/permanent")
+    public ResponseEntity<ApiResponse<Void>> deleteProductPermanent(@PathVariable("id") UUID categoryId) {
+        categoryService.deleteCategoryPermanent(categoryId);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                200,
+                "Delete category permanently successfully!",
                 null
         );
         return ResponseEntity.ok(response);
