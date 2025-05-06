@@ -1,16 +1,18 @@
 package nh.khoi.ecommerce.controller.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.CategoryDto;
+import nh.khoi.ecommerce.dto.ProductDto;
+import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.response.ApiResponse;
 import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.CategoryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -36,5 +38,28 @@ public class CategoryAdminController
                 listCategories
         );
         return ResponseEntity.ok(response);
+    }
+
+    // [Post] /admin/categories
+    @Operation(summary = "Create a category")
+    @PostMapping()
+    public ResponseEntity<ApiResponse<CategoryDto>> createCategory(
+            @RequestBody @Valid CategoryDto categoryDto,
+            BindingResult bindingResult
+    )
+    {
+        if(bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldError().getDefaultMessage();
+            ApiResponse<CategoryDto> response = new ApiResponse<>(400, errorMessage, null);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        CategoryDto savedCategory = categoryService.createCategory(categoryDto);
+        ApiResponse<CategoryDto> response = new ApiResponse<>(
+                201,
+                "Create category successfully!",
+                savedCategory
+        );
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

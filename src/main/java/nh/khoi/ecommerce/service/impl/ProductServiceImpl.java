@@ -84,7 +84,7 @@ public class ProductServiceImpl implements ProductService
                         "Product not found with given id: " + productId
                 ));
 
-        // ----- Validation manually ----- //
+        // ----- Validation manually [PATCH] ----- //
         if(updateFields.getName() != null && updateFields.getName().trim().isEmpty()) {
             throw new BadRequestException("Product name is required!");
         }
@@ -92,7 +92,7 @@ public class ProductServiceImpl implements ProductService
         if(updateFields.getPrice() != null && updateFields.getPrice() < 0) {
             throw new BadRequestException("Price cannot be negative!");
         }
-        // ----- End validation manually ----- //
+        // ----- End validation manually [PATCH] ----- //
 
         if(updateFields.getName() != null) {
             product.setName(updateFields.getName());

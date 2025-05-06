@@ -1,5 +1,6 @@
 package nh.khoi.ecommerce.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ import java.util.UUID;
 public class CategoryDto
 {
     private UUID id;
+
+    @NotBlank(message = "Category name is required!")
     private String name;
     private UUID parent;
     private String description;

@@ -8,4 +8,7 @@ public interface CategoryService
     // [GET] /admin/categories
     // List<CategoryDto> getAllCategories(int page, int limit);
     PaginatedResponse<CategoryDto> getAllCategories(int page, int limit);
+
+    // // [Post] /admin/categories
+    CategoryDto createCategory(CategoryDto categoryDto);
 }
