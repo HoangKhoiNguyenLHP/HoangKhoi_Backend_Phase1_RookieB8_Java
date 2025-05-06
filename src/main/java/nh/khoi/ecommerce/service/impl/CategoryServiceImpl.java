@@ -130,7 +130,7 @@ public class CategoryServiceImpl implements CategoryService
                         Optional<Category> cateWithMaxPosition = categoryRepository.findTopByOrderByPositionDesc();
 
                         int newPosition = cateWithMaxPosition
-                                .map(c -> c.getPosition() != null ? c.getPosition() + 1 : 1)
+                                .map(item -> item.getPosition() != null ? item.getPosition() + 1 : 1)
                                 .orElse(1);
                         category.setPosition(newPosition);
                     }

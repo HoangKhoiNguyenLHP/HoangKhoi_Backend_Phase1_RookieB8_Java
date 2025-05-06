@@ -19,7 +19,9 @@ public class ProductDto
     private Double price;
     private List<String> images;
     private Boolean isFeatured = false;
+    private Integer position;
     private Boolean deleted = false;
+    private String slug;
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;
 }

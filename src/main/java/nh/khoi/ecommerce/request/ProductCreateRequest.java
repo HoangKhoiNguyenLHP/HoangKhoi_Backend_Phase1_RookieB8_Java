@@ -22,4 +22,5 @@ public class ProductCreateRequest
     private Double price;
     private List<MultipartFile> images;
     private Boolean isFeatured = false;
+    private Integer position;
 }

@@ -13,7 +13,9 @@ public class ProductMapper
                 product.getPrice(),
                 product.getImages(),
                 product.getIsFeatured(),
+                product.getPosition(),
                 product.getDeleted(),
+                product.getSlug(),
                 product.getCreatedOn(),
                 product.getUpdatedOn()
         );
@@ -27,7 +29,9 @@ public class ProductMapper
                 productDto.getPrice(),
                 productDto.getImages(),
                 productDto.getIsFeatured(),
+                productDto.getPosition(),
                 productDto.getDeleted(),
+                productDto.getSlug(),
                 productDto.getCreatedOn(),
                 productDto.getUpdatedOn()
         );

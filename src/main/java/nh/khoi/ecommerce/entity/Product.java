@@ -39,8 +39,14 @@ public class Product
     @Column(name = "is_featured")
     private Boolean isFeatured = false;
 
+    @Column(name = "position")
+    private Integer position;
+
     @Column(name = "deleted")
     private Boolean deleted = false;
+
+    @Column(name = "slug", nullable = false, unique = true)
+    private String slug;
 
     @Column(name = "created_on")
     @CreationTimestamp

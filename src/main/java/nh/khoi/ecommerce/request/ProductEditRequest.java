@@ -18,4 +18,5 @@ public class ProductEditRequest
     private Boolean isFeatured;
     // private List<MultipartFile> images;
     private MultipartFile[] images;
+    private Integer position;
 }

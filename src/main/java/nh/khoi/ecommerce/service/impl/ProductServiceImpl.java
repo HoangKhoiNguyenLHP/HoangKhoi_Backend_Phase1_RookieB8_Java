@@ -2,6 +2,7 @@ package nh.khoi.ecommerce.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.ProductDto;
+import nh.khoi.ecommerce.entity.Category;
 import nh.khoi.ecommerce.entity.Product;
 import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.exception.ResourceNotFoundException;
@@ -12,6 +13,7 @@ import nh.khoi.ecommerce.request.ProductEditRequest;
 import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.CloudinaryService;
 import nh.khoi.ecommerce.service.ProductService;
+import nh.khoi.ecommerce.utils.SlugUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -63,6 +66,22 @@ public class ProductServiceImpl implements ProductService
         product.setPrice(createProductRequest.getPrice() != null ? createProductRequest.getPrice() : 0.0);
         product.setIsFeatured(createProductRequest.getIsFeatured() != null ? createProductRequest.getIsFeatured() : false);
 
+        if(createProductRequest.getPosition() == null) {
+            Optional<Product> productWithMaxPosition = productRepository.findTopByOrderByPositionDesc();
+
+            int newPosition = productWithMaxPosition
+                    .map(item -> item.getPosition() != null ? item.getPosition() + 1 : 1)
+                    .orElse(1);
+            product.setPosition(newPosition);
+        }
+        else {
+            product.setPosition(createProductRequest.getPosition()); // <-- THIS is crucial
+        }
+
+        String baseSlug = SlugUtil.toSlug(createProductRequest.getName());
+        String uniqueSlug = SlugUtil.generateUniqueSlug(baseSlug, slug -> productRepository.existsBySlug(slug));
+        product.setSlug(uniqueSlug);
+
         // Upload images
         if (createProductRequest.getImages() != null && !createProductRequest.getImages().isEmpty()) {
             List<String> imageUrls = createProductRequest.getImages().stream()
@@ -96,6 +115,10 @@ public class ProductServiceImpl implements ProductService
 
         if(updateFields.getName() != null) {
             product.setName(updateFields.getName());
+            // update slug
+            String baseSlug = SlugUtil.toSlug(updateFields.getName());
+            String uniqueSlug = SlugUtil.generateUniqueSlug(baseSlug, slug -> productRepository.existsBySlug(slug));
+            product.setSlug(uniqueSlug);
         }
 
         if(updateFields.getDescription() != null) {
@@ -108,6 +131,14 @@ public class ProductServiceImpl implements ProductService
 
         if(updateFields.getIsFeatured() != null) {
             product.setIsFeatured(updateFields.getIsFeatured());
+        }
+
+        if(updateFields.getPosition() != null && !updateFields.getPosition().toString().isBlank()) {
+            try {
+                product.setPosition(Integer.parseInt(updateFields.getPosition().toString()));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Position must be an integer!");
+            }
         }
 
         // ---- old
