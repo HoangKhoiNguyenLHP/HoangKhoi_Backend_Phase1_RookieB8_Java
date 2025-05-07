@@ -67,11 +67,18 @@ public class AccountAdminController
     // [POST] /admin/account/login
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Map<String, Object>>> loginAccount(
-            @RequestBody LoginRequest accountDto,
-            HttpServletResponse httpResponse
+            @RequestBody @Valid LoginRequest accountDto,
+            HttpServletResponse httpResponse,
+            BindingResult bindingResult
     )
     {
         try {
+            if(bindingResult.hasErrors()) {
+                String errorMessage = bindingResult.getFieldError().getDefaultMessage();
+                ApiResponse<Map<String, Object>> response = new ApiResponse<>(400, errorMessage, null);
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
             Map<String, Object> resultFromService = accountAdminService.loginAccount(
                     accountDto.getEmail(),
                     accountDto.getPassword(),
