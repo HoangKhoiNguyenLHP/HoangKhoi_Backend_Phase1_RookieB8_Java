@@ -3,6 +3,7 @@ package nh.khoi.ecommerce.controller.admin;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import nh.khoi.ecommerce.dto.AccountAdminDto;
 import nh.khoi.ecommerce.dto.CategoryDto;
 import nh.khoi.ecommerce.request.CategoryTreeRequest;
 import nh.khoi.ecommerce.response.ApiResponse;
@@ -40,6 +41,20 @@ public class CategoryAdminController
                 200,
                 "Get list categories successfully!",
                 listCategories
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    // [GET] /admin/categories/:id
+    @Operation(summary = "Get a category detail")
+    @GetMapping("{id}")
+    public ResponseEntity<ApiResponse<CategoryDto>> getAccountAdminById(@PathVariable("id") UUID categoryId) {
+        CategoryDto categoryDto = categoryService.getCategoryById(categoryId);
+
+        ApiResponse<CategoryDto> response = new ApiResponse<>(
+                200,
+                "Get category detail successfully!",
+                categoryDto
         );
         return ResponseEntity.ok(response);
     }

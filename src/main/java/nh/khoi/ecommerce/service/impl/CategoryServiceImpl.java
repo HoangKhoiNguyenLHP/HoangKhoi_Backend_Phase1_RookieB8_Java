@@ -54,6 +54,18 @@ public class CategoryServiceImpl implements CategoryService
 
         return response;
     }
+
+    // [GET] /admin/categories/:id
+    @Override
+    public CategoryDto getCategoryById(UUID categoryId)
+    {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Category not found with given id: " + categoryId
+                ));
+
+        return CategoryMapper.mapToCategoryDto(category);
+    }
     // -------------- End [] -------------- //
 
 

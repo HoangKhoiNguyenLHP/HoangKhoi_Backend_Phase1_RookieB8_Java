@@ -15,6 +15,9 @@ public interface CategoryService
     // [GET] /admin/categories
     // List<CategoryDto> getAllCategories(int page, int limit);
     PaginatedResponse<CategoryDto> getAllCategories(int page, int limit);
+
+    // [GET] /admin/categories/:id
+    CategoryDto getCategoryById(UUID categoryId);
     // -------------- End [] -------------- //
 
 
