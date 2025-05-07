@@ -29,8 +29,9 @@ public class CategoryServiceImpl implements CategoryService
     // -------------- [] -------------- //
     // [GET] /admin/categories
     @Override
-    public PaginatedResponse<CategoryDto> getAllCategories(int page, int limit)
+    public PaginatedResponse<CategoryDto> getAllCategories(int page, int limit, String keyword)
     {
+        // ----- Pagination ----- //
         Pageable pageable = PageRequest.of(
                 page - 1,
                 limit,
@@ -38,6 +39,16 @@ public class CategoryServiceImpl implements CategoryService
         );
 
         Page<Category> listCategories = categoryRepository.findAllByDeletedFalse(pageable);
+        // ----- End Pagination ----- //
+
+
+        // ----- Search ----- //
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String slugifiedKeyword = SlugUtil.toSlug(keyword);
+            listCategories = categoryRepository.findBySlugContainingIgnoreCaseAndDeletedFalse(slugifiedKeyword, pageable);
+        }
+        // ----- End search ----- //
+
 
         List<CategoryDto> categoryDtos = listCategories
                 .getContent()

@@ -5,9 +5,9 @@ import java.util.function.Function;
 public class SlugUtil
 {
     public static String toSlug(String input) {
-        return input.trim().toLowerCase()
-                .replaceAll("[^a-z0-9\\s-]", "")
-                .replaceAll("\\s+", "-");
+        return input.toLowerCase()
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("^-|-$", "");
     }
 
     public static String generateUniqueSlug(String baseSlug, Function<String, Boolean> slugExisted) {

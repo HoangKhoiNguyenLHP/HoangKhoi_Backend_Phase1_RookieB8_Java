@@ -31,11 +31,12 @@ public class CategoryAdminController
     @GetMapping()
     public ResponseEntity<ApiResponse<PaginatedResponse<CategoryDto>>> getAllCategories(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "50") int limit
+            @RequestParam(defaultValue = "50") int limit,
+            @RequestParam(required = false) String keyword
     )
     {
         // List<CategoryDto> listCategories = categoryService.getAllCategories(page, limit);
-        PaginatedResponse<CategoryDto> listCategories = categoryService.getAllCategories(page, limit);
+        PaginatedResponse<CategoryDto> listCategories = categoryService.getAllCategories(page, limit, keyword);
 
         ApiResponse<PaginatedResponse<CategoryDto>> response = new ApiResponse<>(
                 200,
