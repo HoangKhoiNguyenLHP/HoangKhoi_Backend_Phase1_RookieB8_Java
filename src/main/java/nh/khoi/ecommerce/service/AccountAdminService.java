@@ -14,4 +14,7 @@ public interface AccountAdminService
 
     // [POST] /admin/account/logout
     void logoutAccount(HttpServletResponse response);
+
+    // [GET] /admin/account/profile
+    Map<String, Object> getCurrentAccount();
 }

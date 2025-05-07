@@ -9,6 +9,7 @@ import nh.khoi.ecommerce.entity.AccountAdmin;
 import nh.khoi.ecommerce.repository.AccountAdminRepository;
 import nh.khoi.ecommerce.service.AccountAdminService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -128,5 +129,20 @@ public class AccountAdminServiceImpl implements AccountAdminService
                                                               //              this cookie can only be automatically saved and sent by BE
 
         response.addCookie(cookie);
+    }
+
+    // [GET] /admin/account/profile
+    @Override
+    public Map<String, Object> getCurrentAccount()
+    {
+        Object currentLoggedInUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (currentLoggedInUser instanceof AccountAdmin admin) {
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("email", admin.getEmail());
+            return result;
+        }
+
+        throw new RuntimeException("User not authenticated");
     }
 }

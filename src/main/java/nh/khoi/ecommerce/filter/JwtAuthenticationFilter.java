@@ -26,7 +26,6 @@ import java.util.UUID;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter
 {
-
     @Value("${JWT_SECRET}")
     private String JWT_SECRET;
 
@@ -52,9 +51,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
+        // System.out.println("shouldNotFilter called with path: " + path);
 
         return path.equals("/" + adminPath + "/account/login") ||
                 path.equals("/" + adminPath + "/account/register") ||
+                path.equals("/" + adminPath + "/account/logout") ||
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/v3/api-docs") ||
                 path.equals("/swagger-ui.html");
@@ -65,11 +66,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException
     {
+        // System.out.println("JwtAuthenticationFilter triggered for: " + request.getRequestURI());
+
         // ----- Get token from cookie (Postman, SwaggerUI) ----- //
         String token = null;
 
         // try reading from Authorization header first
         String authHeader = request.getHeader("Authorization");
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7); // Remove "Bearer "
         }
@@ -83,6 +87,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
                 }
             }
         }
+        // System.out.println("my token >>> " + token);
+        // System.out.println("-----------------------------");
         // ----- End get token from cookie (Postman, SwaggerUI) ----- //
 
 
