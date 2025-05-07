@@ -7,6 +7,7 @@ import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.exception.ResourceNotFoundException;
 import nh.khoi.ecommerce.mapper.CategoryMapper;
 import nh.khoi.ecommerce.repository.CategoryRepository;
+import nh.khoi.ecommerce.request.CategoryTreeRequest;
 import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.CategoryService;
 import nh.khoi.ecommerce.utils.SlugUtil;
@@ -14,11 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,11 +26,16 @@ public class CategoryServiceImpl implements CategoryService
 {
     private final CategoryRepository categoryRepository;
 
+    // -------------- [] -------------- //
     // [GET] /admin/categories
     @Override
     public PaginatedResponse<CategoryDto> getAllCategories(int page, int limit)
     {
-        Pageable pageable = PageRequest.of(page - 1, limit);
+        Pageable pageable = PageRequest.of(
+                page - 1,
+                limit,
+                Sort.by("position").descending()
+        );
 
         Page<Category> listCategories = categoryRepository.findAllByDeletedFalse(pageable);
 
@@ -49,6 +53,37 @@ public class CategoryServiceImpl implements CategoryService
         );
 
         return response;
+    }
+    // -------------- End [] -------------- //
+
+
+    // -------------- [] -------------- //
+    @Override
+    public List<CategoryTreeRequest> buildCategoryTree(List<Category> listCategories, UUID parentId)
+    {
+        List<CategoryTreeRequest> result = new ArrayList<>();
+
+        for (Category category : listCategories) {
+            if (Objects.equals(category.getParent(), parentId)) {
+                CategoryTreeRequest node = new CategoryTreeRequest(
+                        category.getId(),
+                        category.getName(),
+                        category.getSlug(),
+                        buildCategoryTree(listCategories, category.getId()) // recursive
+                );
+                result.add(node);
+            }
+        }
+
+        return result;
+    }
+
+    // [GET] /admin/categories/create
+    @Override
+    public List<CategoryTreeRequest> getCategoryCreatePageData()
+    {
+        List<Category> listCategories = categoryRepository.findAllByDeletedFalse();
+        return buildCategoryTree(listCategories, null); // top-level categories
     }
 
     // [Post] /admin/categories
@@ -79,7 +114,10 @@ public class CategoryServiceImpl implements CategoryService
         Category savedCategory = categoryRepository.save(category);
         return CategoryMapper.mapToCategoryDto(savedCategory);
     }
+    // -------------- End [] -------------- //
 
+
+    // -------------- [] -------------- //
     // [PATCH] /admin/categories/:id
     @Override
     public CategoryDto editCategory(Map<String, Object> updateFields, UUID categoryId)
@@ -149,7 +187,10 @@ public class CategoryServiceImpl implements CategoryService
         Category updatedCategory = categoryRepository.save(category);
         return CategoryMapper.mapToCategoryDto(updatedCategory);
     }
+    // -------------- End [] -------------- //
 
+
+    // -------------- [] -------------- //
     // [DELETE] /admin/categories/:id
     @Override
     public void deleteCategorySoft(UUID categoryId)
@@ -189,4 +230,5 @@ public class CategoryServiceImpl implements CategoryService
 
         categoryRepository.deleteById(categoryId);
     }
+    // -------------- End [] -------------- //
 }

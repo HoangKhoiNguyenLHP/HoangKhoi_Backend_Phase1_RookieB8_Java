@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.CategoryDto;
+import nh.khoi.ecommerce.request.CategoryTreeRequest;
 import nh.khoi.ecommerce.response.ApiResponse;
 import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.CategoryService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,12 +24,13 @@ public class CategoryAdminController
 {
     private final CategoryService categoryService;
 
+    // -------------- [] -------------- //
     // [GET] /admin/categories
     @Operation(summary = "Get all categories")
     @GetMapping()
     public ResponseEntity<ApiResponse<PaginatedResponse<CategoryDto>>> getAllCategories(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "3") int limit
+            @RequestParam(defaultValue = "50") int limit
     )
     {
         // List<CategoryDto> listCategories = categoryService.getAllCategories(page, limit);
@@ -38,6 +41,24 @@ public class CategoryAdminController
                 "Get list categories successfully!",
                 listCategories
         );
+        return ResponseEntity.ok(response);
+    }
+    // -------------- End [] -------------- //
+
+
+    // -------------- [] -------------- //
+    // [GET] /admin/categories/create
+    @Operation(summary = "Get all categories but format as tree")
+    @GetMapping("/create")
+    public ResponseEntity<ApiResponse<List<CategoryTreeRequest>>> getCategoryCreatePage() {
+        List<CategoryTreeRequest> tree = categoryService.getCategoryCreatePageData();
+
+        ApiResponse<List<CategoryTreeRequest>> response = new ApiResponse<>(
+                200,
+                "Get category tree successfully!",
+                tree
+        );
+
         return ResponseEntity.ok(response);
     }
 
@@ -63,7 +84,10 @@ public class CategoryAdminController
         );
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+    // -------------- End [] -------------- //
 
+
+    // -------------- [] -------------- //
     // [PATCH] /admin/categories/:id
     @Operation(summary = "Update a category")
     @PatchMapping("{id}")
@@ -80,7 +104,10 @@ public class CategoryAdminController
         );
         return ResponseEntity.ok(response);
     }
+    // -------------- End [] -------------- //
 
+
+    // -------------- [] -------------- //
     // [DELETE] /admin/categories/:id
     @Operation(summary = "Delete soft a category")
     @DeleteMapping("{id}")
@@ -122,4 +149,5 @@ public class CategoryAdminController
         );
         return ResponseEntity.ok(response);
     }
+    // -------------- End [] -------------- //
 }
