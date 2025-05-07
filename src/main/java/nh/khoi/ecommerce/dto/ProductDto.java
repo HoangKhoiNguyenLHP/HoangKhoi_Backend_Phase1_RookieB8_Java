@@ -20,6 +20,7 @@ public class ProductDto
     private List<String> images;
     private Boolean isFeatured = false;
     private Integer position;
+    private Integer stock = 0;
     private Boolean deleted = false;
     private String slug;
     private LocalDateTime createdOn;

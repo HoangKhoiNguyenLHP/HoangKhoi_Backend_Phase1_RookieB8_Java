@@ -24,16 +24,18 @@ public class ProductAdminController
 {
     private final ProductService productService;
 
+    // -------------- [] -------------- //
     // [GET] /admin/products
     @Operation(summary = "Get all products")
     @GetMapping()
     public ResponseEntity<ApiResponse<PaginatedResponse<ProductDto>>> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "3") int limit
+            @RequestParam(defaultValue = "50") int limit,
+            @RequestParam(required = false) String keyword
     )
     {
         // List<ProductDto> listProducts = productService.getAllProducts(page, limit);
-        PaginatedResponse<ProductDto> listProducts = productService.getAllProducts(page, limit);
+        PaginatedResponse<ProductDto> listProducts = productService.getAllProducts(page, limit, keyword);
 
         ApiResponse<PaginatedResponse<ProductDto>> response = new ApiResponse<>(
                 200,
@@ -42,6 +44,8 @@ public class ProductAdminController
         );
         return ResponseEntity.ok(response);
     }
+    // -------------- End [] -------------- //
+
 
     // [POST] /admin/products
     @Operation(summary = "Create a product")

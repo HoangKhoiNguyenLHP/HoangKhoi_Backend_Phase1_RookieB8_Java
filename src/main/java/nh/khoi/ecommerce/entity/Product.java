@@ -42,6 +42,9 @@ public class Product
     @Column(name = "position")
     private Integer position;
 
+    @Column(name = "stock")
+    private Integer stock = 0;
+
     @Column(name = "deleted")
     private Boolean deleted = false;
 
@@ -58,6 +61,6 @@ public class Product
 
     @Override
     public String toString() {
-        return "Product{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", price=" + price + ", images=" + images + ", isFeatured=" + isFeatured + ", deleted=" + deleted + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + '}';
+        return "Product{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", price=" + price + ", images=" + images + ", isFeatured=" + isFeatured + ", position=" + position + ", stock=" + stock + ", deleted=" + deleted + ", slug='" + slug + '\'' + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + '}';
     }
 }

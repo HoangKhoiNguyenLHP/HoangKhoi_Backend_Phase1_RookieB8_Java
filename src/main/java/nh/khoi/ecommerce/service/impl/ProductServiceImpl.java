@@ -2,7 +2,6 @@ package nh.khoi.ecommerce.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.ProductDto;
-import nh.khoi.ecommerce.entity.Category;
 import nh.khoi.ecommerce.entity.Product;
 import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.exception.ResourceNotFoundException;
@@ -14,6 +13,7 @@ import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.CloudinaryService;
 import nh.khoi.ecommerce.service.ProductService;
 import nh.khoi.ecommerce.utils.SlugUtil;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,13 +32,29 @@ public class ProductServiceImpl implements ProductService
     private final ProductRepository productRepository;
     private final CloudinaryService cloudinaryService;
 
+    // -------------- [] -------------- //
     // [GET] /admin/products
     @Override
-    public PaginatedResponse<ProductDto> getAllProducts(int page, int limit)
+    public PaginatedResponse<ProductDto> getAllProducts(int page, int limit, String keyword)
     {
-        Pageable pageable = PageRequest.of(page - 1, limit);
+        // ----- Pagination ----- //
+        Pageable pageable = PageRequest.of(
+                page - 1,
+                limit,
+                Sort.by("position").descending()
+        );
 
         Page<Product> listProducts = productRepository.findAllByDeletedFalse(pageable);
+        // ----- End pagination ----- //
+
+
+        // ----- Search ----- //
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String slugifiedKeyword = SlugUtil.toSlug(keyword);
+            listProducts = productRepository.findBySlugContainingIgnoreCaseAndDeletedFalse(slugifiedKeyword, pageable);
+        }
+        // ----- End search ----- //
+
 
         List<ProductDto> productDtos = listProducts
                 .getContent()
@@ -55,6 +71,7 @@ public class ProductServiceImpl implements ProductService
 
         return response;
     }
+    // -------------- End [] -------------- //
 
     // [POST] /admin/products
     @Override
