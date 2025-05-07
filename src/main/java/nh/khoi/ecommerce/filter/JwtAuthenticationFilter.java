@@ -74,15 +74,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
             token = authHeader.substring(7); // Remove "Bearer "
         }
 
-        // fallback to cookie if header is not present
-        // if (token == null && request.getCookies() != null) {
-        //     for (Cookie cookie : request.getCookies()) {
-        //         if ("token".equals(cookie.getName())) {
-        //             token = cookie.getValue();
-        //             break;
-        //         }
-        //     }
-        // }
+        // try reading from cookies
+        if (token == null && request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
         // ----- End get token from cookie (Postman, SwaggerUI) ----- //
 
 

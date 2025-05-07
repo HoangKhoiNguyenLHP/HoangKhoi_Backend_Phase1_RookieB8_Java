@@ -2,8 +2,9 @@ package nh.khoi.ecommerce.service.impl;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import nh.khoi.ecommerce.dto.AccountAdminDto;
 import nh.khoi.ecommerce.entity.AccountAdmin;
 import nh.khoi.ecommerce.repository.AccountAdminRepository;
 import nh.khoi.ecommerce.service.AccountAdminService;
@@ -59,7 +60,7 @@ public class AccountAdminServiceImpl implements AccountAdminService
 
     // [POST] /admin/account/login
     @Override
-    public Map<String, Object> loginAccount(String email, String password)
+    public Map<String, Object> loginAccount(String email, String password, HttpServletResponse response)
     {
         // ----- Check existed email ----- //
         AccountAdmin account = accountAdminRepository.findByEmail(email)
@@ -93,10 +94,39 @@ public class AccountAdminServiceImpl implements AccountAdminService
                 .compact();
         // ----- End JWT generation ----- //
 
+        // ----- Set HttpOnly cookie ----- //
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true); // only Server is allowed to access this cookie
+        cookie.setSecure(true); // only on HTTPS
+        cookie.setPath("/"); // root path
+        cookie.setMaxAge((int)(expirationMillis / 1000)); // in seconds
+        cookie.setAttribute("SameSite", "Strict"); // other websites cannot use this cookie to send request
+                                                              // for example, if we use FE to send this cookie, it cannot send
+                                                              //              this cookie can only be automatically saved and sent by BE
+
+        response.addCookie(cookie);
+        // ----- End set cookie ----- //
+
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("token", token);
         result.put("expireAt", expiryDate); // millisecond
 
         return result;
+    }
+
+    // [POST] /admin/account/logout
+    @Override
+    public void logoutAccount(HttpServletResponse response)
+    {
+        Cookie cookie = new Cookie("token", "");
+        cookie.setHttpOnly(true); // only Server is allowed to access this cookie
+        cookie.setSecure(true); // only on HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // expire immediately
+        cookie.setAttribute("SameSite", "Strict"); // other websites cannot use this cookie to send request
+                                                              // for example, if we use FE to send this cookie, it cannot send
+                                                              //              this cookie can only be automatically saved and sent by BE
+
+        response.addCookie(cookie);
     }
 }

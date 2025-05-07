@@ -1,6 +1,8 @@
 package nh.khoi.ecommerce.controller.admin;
 
 
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.request.LoginRequest;
 import nh.khoi.ecommerce.request.RegisterRequest;
@@ -8,6 +10,7 @@ import nh.khoi.ecommerce.response.ApiResponse;
 import nh.khoi.ecommerce.service.AccountAdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -25,8 +28,18 @@ public class AccountAdminController
 
     // [POST] /admin/account/register
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<Void>> registerAccount(@RequestBody RegisterRequest accountAdminDto) {
+    public ResponseEntity<ApiResponse<Void>> registerAccount(
+            @RequestBody @Valid RegisterRequest accountAdminDto,
+            BindingResult bindingResult
+    )
+    {
         try {
+            if(bindingResult.hasErrors()) {
+                String errorMessage = bindingResult.getFieldError().getDefaultMessage();
+                ApiResponse<Void> response = new ApiResponse<>(400, errorMessage, null);
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
             accountAdminService.registerAccount(
                 accountAdminDto.getFirstName(),
                 accountAdminDto.getLastName(),
@@ -53,9 +66,17 @@ public class AccountAdminController
 
     // [POST] /admin/account/login
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> loginAccount(@RequestBody LoginRequest accountDto) {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> loginAccount(
+            @RequestBody LoginRequest accountDto,
+            HttpServletResponse httpResponse
+    )
+    {
         try {
-            Map<String, Object> resultFromService = accountAdminService.loginAccount(accountDto.getEmail(), accountDto.getPassword());
+            Map<String, Object> resultFromService = accountAdminService.loginAccount(
+                    accountDto.getEmail(),
+                    accountDto.getPassword(),
+                    httpResponse
+            );
 
             ApiResponse<Map<String, Object>> response = new ApiResponse<>(
                     200,
@@ -72,5 +93,18 @@ public class AccountAdminController
             );
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
+    }
+
+    // [POST] /admin/account/logout
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logoutAccount(HttpServletResponse httpResponse) {
+        accountAdminService.logoutAccount(httpResponse);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                200,
+                "Logout successfully!",
+                null
+        );
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,5 +1,7 @@
 package nh.khoi.ecommerce.service;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Map;
 
 public interface AccountAdminService
@@ -8,5 +10,8 @@ public interface AccountAdminService
     void registerAccount(String firstName, String lastName, String email, String password);
 
     // [POST] /admin/account/login
-    Map<String, Object> loginAccount(String email, String password);
+    Map<String, Object> loginAccount(String email, String password, HttpServletResponse response);
+
+    // [POST] /admin/account/logout
+    void logoutAccount(HttpServletResponse response);
 }
