@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.entity.AccountAdmin;
+import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.repository.AccountAdminRepository;
 import nh.khoi.ecommerce.service.AccountAdminService;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +42,7 @@ public class AccountAdminServiceImpl implements AccountAdminService
         // ----- Check existed email ----- //
         Optional<AccountAdmin> existedAccount = accountAdminRepository.findByEmail(email);
         if(existedAccount.isPresent()) {
-            throw new RuntimeException("Email existed in the system!");
+            throw new BadRequestException("Email existed in the system!");
         }
         // ----- End check existed email ----- //
 

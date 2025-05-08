@@ -31,17 +31,9 @@ public class AccountAdminController
     // [POST] /admin/account/register
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> registerAccount(
-            @RequestBody @Valid RegisterRequest accountAdminDto,
-            BindingResult bindingResult
+            @RequestBody @Valid RegisterRequest accountAdminDto
     )
     {
-        try {
-            if(bindingResult.hasErrors()) {
-                String errorMessage = bindingResult.getFieldError().getDefaultMessage();
-                ApiResponse<Void> response = new ApiResponse<>(400, errorMessage, null);
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-            }
-
             accountAdminService.registerAccount(
                 accountAdminDto.getFirstName(),
                 accountAdminDto.getLastName(),
@@ -55,32 +47,15 @@ public class AccountAdminController
                 null
             );
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        }
-        catch (RuntimeException e) {
-            ApiResponse<Void> errorResponse = new ApiResponse<>(
-                409,
-                e.getMessage(),
-                null
-            );
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-        }
     }
 
     // [POST] /admin/account/login
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Map<String, Object>>> loginAccount(
             @RequestBody @Valid LoginRequest accountDto,
-            HttpServletResponse httpResponse,
-            BindingResult bindingResult
+            HttpServletResponse httpResponse
     )
     {
-        try {
-            if(bindingResult.hasErrors()) {
-                String errorMessage = bindingResult.getFieldError().getDefaultMessage();
-                ApiResponse<Map<String, Object>> response = new ApiResponse<>(400, errorMessage, null);
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-            }
-
             Map<String, Object> resultFromService = accountAdminService.loginAccount(
                     accountDto.getEmail(),
                     accountDto.getPassword(),
@@ -93,15 +68,6 @@ public class AccountAdminController
                     resultFromService
             );
             return ResponseEntity.ok(response);
-        }
-        catch (RuntimeException e) {
-            ApiResponse<Map<String, Object>> errorResponse = new ApiResponse<>(
-                    401,
-                    e.getMessage(),
-                    null
-            );
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
     }
 
     // [POST] /admin/account/logout

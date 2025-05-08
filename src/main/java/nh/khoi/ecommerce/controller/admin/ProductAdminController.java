@@ -3,7 +3,6 @@ package nh.khoi.ecommerce.controller.admin;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import nh.khoi.ecommerce.dto.CategoryDto;
 import nh.khoi.ecommerce.dto.ProductDto;
 import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.request.ProductEditRequest;
@@ -12,7 +11,6 @@ import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,17 +64,11 @@ public class ProductAdminController
     @Operation(summary = "Create a product")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<ProductDto>> createProduct(
-            @ModelAttribute @Valid ProductCreateRequest createProductRequest,
-            BindingResult bindingResult
+            @ModelAttribute @Valid ProductCreateRequest createProductRequest
     )
     {
-        if(bindingResult.hasErrors()) {
-            String errorMessage = bindingResult.getFieldError().getDefaultMessage();
-            ApiResponse<ProductDto> response = new ApiResponse<>(400, errorMessage, null);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-
         ProductDto savedProduct = productService.createProduct(createProductRequest);
+
         ApiResponse<ProductDto> response = new ApiResponse<>(
                 201,
                 "Create product successfully!",
@@ -94,6 +86,7 @@ public class ProductAdminController
     )
     {
         ProductDto updatedProduct = productService.editProduct(updateFields, productId);
+
         ApiResponse<ProductDto> response = new ApiResponse<>(
                 200,
                 "Update product successfully!",

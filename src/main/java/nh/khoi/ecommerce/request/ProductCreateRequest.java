@@ -25,5 +25,8 @@ public class ProductCreateRequest
     private Boolean isFeatured = false;
     private Integer position;
 
+    @DecimalMin(value = "0.0", inclusive = true, message = "Stock cannot be negative!")
+    private Integer stock;
+
     private List<UUID> categoryIds;
 }

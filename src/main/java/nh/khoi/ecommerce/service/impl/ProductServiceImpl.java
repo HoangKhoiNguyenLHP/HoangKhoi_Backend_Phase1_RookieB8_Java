@@ -95,6 +95,7 @@ public class ProductServiceImpl implements ProductService
         product.setName(createProductRequest.getName());
         product.setDescription(createProductRequest.getDescription());
         product.setPrice(createProductRequest.getPrice() != null ? createProductRequest.getPrice() : 0.0);
+        product.setStock(createProductRequest.getStock() != null ? createProductRequest.getStock() : 0);
         product.setIsFeatured(createProductRequest.getIsFeatured() != null ? createProductRequest.getIsFeatured() : false);
 
         if(createProductRequest.getPosition() == null) {
@@ -151,6 +152,10 @@ public class ProductServiceImpl implements ProductService
         if(updateFields.getPrice() != null && updateFields.getPrice() < 0) {
             throw new BadRequestException("Price cannot be negative!");
         }
+
+        if(updateFields.getStock() != null && updateFields.getStock() < 0) {
+            throw new BadRequestException("Stock cannot be negative!");
+        }
         // ----- End validation manually [PATCH] ----- //
 
         if(updateFields.getName() != null) {
@@ -167,6 +172,10 @@ public class ProductServiceImpl implements ProductService
 
         if(updateFields.getPrice() != null) {
             product.setPrice(updateFields.getPrice());
+        }
+
+        if(updateFields.getStock() != null) {
+            product.setStock(updateFields.getStock());
         }
 
         if(updateFields.getIsFeatured() != null) {
