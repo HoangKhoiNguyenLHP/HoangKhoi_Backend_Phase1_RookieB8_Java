@@ -4,3 +4,11 @@ spring.datasource.username=your_username
 spring.datasource.password=your_password
 
 spring.jpa.hibernate.ddl-auto=update
+
+# JWT
+JWT_SECRET=
+
+# cloudinary configs
+CLOUD_NAME=
+CLOUD_API_KEY=
+CLOUD_API_SECRET=

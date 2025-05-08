@@ -1,14 +1,10 @@
 package nh.khoi.ecommerce.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountAdminDto
@@ -16,5 +12,8 @@ public class AccountAdminDto
     private UUID id;
     private String firstName;
     private String lastName;
+    // private String fullName;
     private String email;
+    private String password;
+    private String status;
 }
