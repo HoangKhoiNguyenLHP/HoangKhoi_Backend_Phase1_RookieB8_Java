@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -23,4 +24,6 @@ public class ProductCreateRequest
     private List<MultipartFile> images;
     private Boolean isFeatured = false;
     private Integer position;
+
+    private List<UUID> categoryIds;
 }

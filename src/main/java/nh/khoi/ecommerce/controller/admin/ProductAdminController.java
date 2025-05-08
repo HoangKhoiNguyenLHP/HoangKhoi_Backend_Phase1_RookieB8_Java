@@ -3,6 +3,7 @@ package nh.khoi.ecommerce.controller.admin;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import nh.khoi.ecommerce.dto.CategoryDto;
 import nh.khoi.ecommerce.dto.ProductDto;
 import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.request.ProductEditRequest;
@@ -41,6 +42,20 @@ public class ProductAdminController
                 200,
                 "Get list products successfully!",
                 listProducts
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    // [GET] /admin/products/:id
+    @Operation(summary = "Get a product detail")
+    @GetMapping("{id}")
+    public ResponseEntity<ApiResponse<ProductDto>> getProductById(@PathVariable("id") UUID productId) {
+        ProductDto productDto = productService.getProductById(productId);
+
+        ApiResponse<ProductDto> response = new ApiResponse<>(
+                200,
+                "Get product detail successfully!",
+                productDto
         );
         return ResponseEntity.ok(response);
     }

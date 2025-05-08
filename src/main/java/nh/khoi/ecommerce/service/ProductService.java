@@ -1,5 +1,6 @@
 package nh.khoi.ecommerce.service;
 
+import nh.khoi.ecommerce.dto.CategoryDto;
 import nh.khoi.ecommerce.dto.ProductDto;
 import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.request.ProductEditRequest;
@@ -14,6 +15,9 @@ public interface ProductService
     // [GET] /admin/products
     // List<ProductDto> getAllProducts(int page, int limit);
     PaginatedResponse<ProductDto> getAllProducts(int page, int limit, String keyword);
+
+    // [GET] /admin/products/:id
+    ProductDto getProductById(UUID productId);
     // -------------- End [] -------------- //
 
     // [POST] /admin/products

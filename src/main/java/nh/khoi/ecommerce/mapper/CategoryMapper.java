@@ -21,16 +21,17 @@ public class CategoryMapper
     }
 
     public static Category mapToCategory(CategoryDto categoryDto) {
-        return new Category(
-                categoryDto.getId(),
-                categoryDto.getName(),
-                categoryDto.getParent(),
-                categoryDto.getDescription(),
-                categoryDto.getPosition(),
-                categoryDto.getDeleted(),
-                categoryDto.getSlug(),
-                categoryDto.getCreatedOn(),
-                categoryDto.getUpdatedOn()
-        );
+        Category category = new Category();
+        category.setId(categoryDto.getId());
+        category.setName(categoryDto.getName());
+        category.setParent(categoryDto.getParent());
+        category.setDescription(categoryDto.getDescription());
+        category.setPosition(categoryDto.getPosition());
+        category.setDeleted(categoryDto.getDeleted());
+        category.setSlug(categoryDto.getSlug());
+        category.setCreatedOn(categoryDto.getCreatedOn());
+        category.setUpdatedOn(categoryDto.getUpdatedOn());
+
+        return category;
     }
 }

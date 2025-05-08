@@ -1,11 +1,15 @@
 package nh.khoi.ecommerce.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import nh.khoi.ecommerce.dto.CategoryDto;
 import nh.khoi.ecommerce.dto.ProductDto;
+import nh.khoi.ecommerce.entity.Category;
 import nh.khoi.ecommerce.entity.Product;
 import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.exception.ResourceNotFoundException;
+import nh.khoi.ecommerce.mapper.CategoryMapper;
 import nh.khoi.ecommerce.mapper.ProductMapper;
+import nh.khoi.ecommerce.repository.CategoryRepository;
 import nh.khoi.ecommerce.repository.ProductRepository;
 import nh.khoi.ecommerce.request.ProductCreateRequest;
 import nh.khoi.ecommerce.request.ProductEditRequest;
@@ -19,10 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService
 {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
     private final CloudinaryService cloudinaryService;
 
     // -------------- [] -------------- //
@@ -71,6 +73,18 @@ public class ProductServiceImpl implements ProductService
 
         return response;
     }
+
+    // [GET] /admin/categories/:id
+    @Override
+    public ProductDto getProductById(UUID productId)
+    {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Product not found with given id: " + productId
+                ));
+
+        return ProductMapper.mapToProductDto(product);
+    }
     // -------------- End [] -------------- //
 
     // [POST] /admin/products
@@ -105,6 +119,15 @@ public class ProductServiceImpl implements ProductService
                     .map(file -> cloudinaryService.uploadFile(file))
                     .toList();
             product.setImages(imageUrls);
+        }
+
+        // Set categories
+        if(createProductRequest.getCategoryIds() != null && !createProductRequest.getCategoryIds().isEmpty()) {
+            Set<Category> categories = createProductRequest.getCategoryIds().stream()
+                    .map(id -> categoryRepository.findById(id)
+                            .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id)))
+                    .collect(Collectors.toSet());
+            product.setCategories(categories);
         }
 
         Product savedProduct = productRepository.save(product);
@@ -160,20 +183,45 @@ public class ProductServiceImpl implements ProductService
 
         // ---- old
         //
-        // if(updateFields.getImages() != null && !updateFields.getImages().isEmpty()) {
-        //     List<String> imageUrls = updateFields.getImages().stream()
+        // if(updateFields.getImages() != null && updateFields.getImages().length > 0) {
+        //     List<String> imageUrls = Arrays.stream(updateFields.getImages())
         //             .map(file -> cloudinaryService.uploadFile(file))
         //             .toList();
         //     product.getImages().addAll(imageUrls);
         // }
 
-        // ---- new
-        //
-        if(updateFields.getImages() != null && updateFields.getImages().length > 0) {
-            List<String> imageUrls = Arrays.stream(updateFields.getImages())
-                    .map(file -> cloudinaryService.uploadFile(file))
-                    .toList();
-            product.getImages().addAll(imageUrls);
+        // Handle images from FilePond
+        if(updateFields.getImages() != null || updateFields.getExistingImageUrls() != null)
+        {
+            List<String> newImageUrls = new ArrayList<>();
+
+            // Handle new file uploads
+            if(updateFields.getImages() != null && updateFields.getImages().length > 0) {
+                List<String> uploadedUrls = Arrays.stream(updateFields.getImages())
+                        .map(file -> cloudinaryService.uploadFile(file))
+                        .toList();
+                newImageUrls.addAll(uploadedUrls);
+            }
+
+            // Handle remaining old image URLs
+            if(updateFields.getExistingImageUrls() != null && !updateFields.getExistingImageUrls().isEmpty()) {
+                List<String> existingUrls = updateFields.getExistingImageUrls(); // parse this if sent as JSON string
+                newImageUrls.addAll(existingUrls);
+            }
+
+            // Replace images
+            product.setImages(newImageUrls);
+        }
+
+        // categories
+        if(updateFields.getCategoryIds() != null) {
+            Set<Category> categories = updateFields.getCategoryIds()
+                    .stream()
+                    .map(id -> categoryRepository.findById(id)
+                            .orElseThrow(() -> new ResourceNotFoundException(
+                                    "Category not found with id: " + id)))
+                    .collect(Collectors.toSet());
+            product.setCategories(categories); // overwrite existing categories
         }
 
         Product updatedProduct = productRepository.save(product);

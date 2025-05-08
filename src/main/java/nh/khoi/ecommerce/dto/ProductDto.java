@@ -25,4 +25,6 @@ public class ProductDto
     private String slug;
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;
+
+    private List<UUID> categoryIds;
 }

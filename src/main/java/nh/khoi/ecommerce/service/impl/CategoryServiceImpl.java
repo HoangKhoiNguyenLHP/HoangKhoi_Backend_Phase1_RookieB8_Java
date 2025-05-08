@@ -66,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService
         return response;
     }
 
-    // [GET] /admin/categories/:id
+    // [GET] /admin/products/:id
     @Override
     public CategoryDto getCategoryById(UUID categoryId)
     {

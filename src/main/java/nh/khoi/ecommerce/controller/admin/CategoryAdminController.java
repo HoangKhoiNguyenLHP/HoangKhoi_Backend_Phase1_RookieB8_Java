@@ -49,7 +49,7 @@ public class CategoryAdminController
     // [GET] /admin/categories/:id
     @Operation(summary = "Get a category detail")
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<CategoryDto>> getAccountAdminById(@PathVariable("id") UUID categoryId) {
+    public ResponseEntity<ApiResponse<CategoryDto>> getCategoryById(@PathVariable("id") UUID categoryId) {
         CategoryDto categoryDto = categoryService.getCategoryById(categoryId);
 
         ApiResponse<CategoryDto> response = new ApiResponse<>(
