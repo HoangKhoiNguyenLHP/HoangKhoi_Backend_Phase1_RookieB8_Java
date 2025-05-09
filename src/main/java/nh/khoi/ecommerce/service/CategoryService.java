@@ -2,6 +2,7 @@ package nh.khoi.ecommerce.service;
 
 import nh.khoi.ecommerce.dto.CategoryDto;
 import nh.khoi.ecommerce.entity.Category;
+import nh.khoi.ecommerce.request.CategoryGetProductsRequest;
 import nh.khoi.ecommerce.request.CategoryTreeRequest;
 import nh.khoi.ecommerce.response.PaginatedResponse;
 
@@ -48,4 +49,7 @@ public interface CategoryService
     // [DELETE] /admin/categories/:id/permanent
     void deleteCategoryPermanent(UUID categoryId);
     // -------------- End [] -------------- //
+
+
+    CategoryGetProductsRequest getProductsByCategorySlug(String slug);
 }

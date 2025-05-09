@@ -2,11 +2,16 @@ package nh.khoi.ecommerce.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import nh.khoi.ecommerce.dto.CategoryDto;
+import nh.khoi.ecommerce.dto.ProductDto;
 import nh.khoi.ecommerce.entity.Category;
+import nh.khoi.ecommerce.entity.Product;
 import nh.khoi.ecommerce.exception.BadRequestException;
 import nh.khoi.ecommerce.exception.ResourceNotFoundException;
 import nh.khoi.ecommerce.mapper.CategoryMapper;
+import nh.khoi.ecommerce.mapper.ProductMapper;
 import nh.khoi.ecommerce.repository.CategoryRepository;
+import nh.khoi.ecommerce.repository.ProductRepository;
+import nh.khoi.ecommerce.request.CategoryGetProductsRequest;
 import nh.khoi.ecommerce.request.CategoryTreeRequest;
 import nh.khoi.ecommerce.response.PaginatedResponse;
 import nh.khoi.ecommerce.service.CategoryService;
@@ -25,6 +30,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService
 {
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     // -------------- [] -------------- //
     // [GET] /admin/categories
@@ -255,4 +261,43 @@ public class CategoryServiceImpl implements CategoryService
         categoryRepository.deleteById(categoryId);
     }
     // -------------- End [] -------------- //
+
+
+    @Override
+    public CategoryGetProductsRequest getProductsByCategorySlug(String slug)
+    {
+        // Find category by slug
+        Category category = categoryRepository
+                .findBySlugAndDeletedFalse(slug)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        // Recursive: get all child category IDs
+        List<UUID> categoryIds = new ArrayList<>();
+        categoryIds.add(category.getId());
+        collectChildCategoryIds(category.getId(), categoryIds);
+
+        // Get all products matching category IDs
+        List<Product> products = productRepository.findByCategoryIds(categoryIds);
+        List<ProductDto> productDtos = products.stream()
+                .map(ProductMapper::mapToProductDto)
+                .toList();
+
+
+        // Assemble response DTO
+        CategoryDto categoryDto = CategoryMapper.mapToCategoryDto(category);
+
+        return new CategoryGetProductsRequest(
+                categoryDto,
+                productDtos
+        );
+    }
+
+    private void collectChildCategoryIds(UUID parentId, List<UUID> result)
+    {
+        List<Category> children = categoryRepository.findByParentAndDeletedFalse(parentId);
+        for (Category child : children) {
+            result.add(child.getId());
+            collectChildCategoryIds(child.getId(), result);
+        }
+    }
 }

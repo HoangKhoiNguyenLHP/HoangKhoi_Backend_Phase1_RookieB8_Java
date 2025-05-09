@@ -16,4 +16,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID>
     Optional<Category> findTopByOrderByPositionDesc();
     Boolean existsBySlug(String slug);
     Page<Category> findBySlugContainingIgnoreCaseAndDeletedFalse(String slug, Pageable pageable);
+
+    Optional<Category> findBySlugAndDeletedFalse(String slug);
+    List<Category> findByParentAndDeletedFalse(UUID parentId);
 }
