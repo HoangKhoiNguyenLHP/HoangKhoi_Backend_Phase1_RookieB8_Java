@@ -31,7 +31,7 @@ public class Category
     @Column(name = "parent")
     private UUID parent; // Self-referencing parent ID; use @ManyToOne if you want object mapping
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "position")

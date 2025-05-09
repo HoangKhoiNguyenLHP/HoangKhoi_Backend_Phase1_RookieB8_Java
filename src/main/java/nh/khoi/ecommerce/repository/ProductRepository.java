@@ -17,4 +17,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID>
     Optional<Product> findTopByOrderByPositionDesc();
     Boolean existsBySlug(String slug);
     Page<Product> findBySlugContainingIgnoreCaseAndDeletedFalse(String slug, Pageable pageable);
+    List<Product> findTop6ByFeaturedAndDeletedOrderByPositionDesc(boolean isFeatured, boolean deleted);
 }

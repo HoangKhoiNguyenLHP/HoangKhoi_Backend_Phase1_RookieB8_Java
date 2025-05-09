@@ -22,7 +22,7 @@ public class ProductMapper
                 product.getDescription(),
                 product.getPrice(),
                 product.getImages(),
-                product.getIsFeatured(),
+                product.getFeatured(),
                 product.getPosition(),
                 product.getStock(),
                 product.getDeleted(),
@@ -41,7 +41,7 @@ public class ProductMapper
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
         product.setImages(productDto.getImages());
-        product.setIsFeatured(productDto.getIsFeatured());
+        product.setFeatured(productDto.getIsFeatured());
         product.setPosition(productDto.getPosition());
         product.setStock(productDto.getStock());
         product.setDeleted(productDto.getDeleted());

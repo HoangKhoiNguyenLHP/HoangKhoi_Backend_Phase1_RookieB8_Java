@@ -29,7 +29,7 @@ public class Product
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "price")
@@ -39,7 +39,7 @@ public class Product
     private List<String> images;
 
     @Column(name = "is_featured")
-    private Boolean isFeatured = false;
+    private Boolean featured = false;
 
     @Column(name = "position")
     private Integer position;
@@ -71,6 +71,6 @@ public class Product
 
     @Override
     public String toString() {
-        return "Product{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", price=" + price + ", images=" + images + ", isFeatured=" + isFeatured + ", position=" + position + ", stock=" + stock + ", deleted=" + deleted + ", slug='" + slug + '\'' + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + '}';
+        return "Product{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", price=" + price + ", images=" + images + ", featured=" + featured + ", position=" + position + ", stock=" + stock + ", deleted=" + deleted + ", slug='" + slug + '\'' + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + ", categories=" + categories + '}';
     }
 }

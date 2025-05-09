@@ -65,6 +65,7 @@ public class ProductServiceImpl implements ProductService
                 .collect(Collectors.toList());
 
         PaginatedResponse<ProductDto> response = new PaginatedResponse<>(
+                listProducts.getNumber() + 1,
                 listProducts.getTotalPages(),
                 listProducts.getTotalElements(),
                 (page - 1) * limit,
@@ -72,6 +73,15 @@ public class ProductServiceImpl implements ProductService
         );
 
         return response;
+    }
+
+    @Override
+    public List<ProductDto> getAllProducts()
+    {
+        List<Product> listProducts = productRepository.findAllByDeletedFalse();
+        return listProducts.stream()
+                .map((item) -> ProductMapper.mapToProductDto(item))
+                .collect(Collectors.toList());
     }
 
     // [GET] /admin/categories/:id
@@ -87,6 +97,15 @@ public class ProductServiceImpl implements ProductService
     }
     // -------------- End [] -------------- //
 
+    @Override
+    public List<ProductDto> getFeaturedProducts()
+    {
+        List<Product> listFeaturedProducts = productRepository.findTop6ByFeaturedAndDeletedOrderByPositionDesc(true, false);
+        return listFeaturedProducts.stream()
+                .map((item) -> ProductMapper.mapToProductDto(item))
+                .collect(Collectors.toList());
+    }
+
     // [POST] /admin/products
     @Override
     public ProductDto createProduct(ProductCreateRequest createProductRequest)
@@ -96,7 +115,7 @@ public class ProductServiceImpl implements ProductService
         product.setDescription(createProductRequest.getDescription());
         product.setPrice(createProductRequest.getPrice() != null ? createProductRequest.getPrice() : 0.0);
         product.setStock(createProductRequest.getStock() != null ? createProductRequest.getStock() : 0);
-        product.setIsFeatured(createProductRequest.getIsFeatured() != null ? createProductRequest.getIsFeatured() : false);
+        product.setFeatured(createProductRequest.getIsFeatured() != null ? createProductRequest.getIsFeatured() : false);
 
         if(createProductRequest.getPosition() == null) {
             Optional<Product> productWithMaxPosition = productRepository.findTopByOrderByPositionDesc();
@@ -179,7 +198,7 @@ public class ProductServiceImpl implements ProductService
         }
 
         if(updateFields.getIsFeatured() != null) {
-            product.setIsFeatured(updateFields.getIsFeatured());
+            product.setFeatured(updateFields.getIsFeatured());
         }
 
         if(updateFields.getPosition() != null && !updateFields.getPosition().toString().isBlank()) {

@@ -16,9 +16,13 @@ public interface ProductService
     // List<ProductDto> getAllProducts(int page, int limit);
     PaginatedResponse<ProductDto> getAllProducts(int page, int limit, String keyword);
 
+    List<ProductDto> getAllProducts();
+
     // [GET] /admin/products/:id
     ProductDto getProductById(UUID productId);
     // -------------- End [] -------------- //
+
+    List<ProductDto> getFeaturedProducts();
 
     // [POST] /admin/products
     ProductDto createProduct(ProductCreateRequest createProductRequest);

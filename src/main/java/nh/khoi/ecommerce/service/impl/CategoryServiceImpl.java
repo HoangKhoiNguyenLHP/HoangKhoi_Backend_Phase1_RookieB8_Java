@@ -57,6 +57,7 @@ public class CategoryServiceImpl implements CategoryService
                 .collect(Collectors.toList());
 
         PaginatedResponse<CategoryDto> response = new PaginatedResponse<>(
+                listCategories.getNumber() + 1,
                 listCategories.getTotalPages(),
                 listCategories.getTotalElements(),
                 (page - 1) * limit,
